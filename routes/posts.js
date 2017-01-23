@@ -8,33 +8,35 @@ const express = require('express'),
   passportService = require('../config/passport'),
   utils = require('../utils/utils')
 
-const requireAuth = passport.authenticate('jwt', {session: false});
+const requireAuth = passport.authenticate('jwt', {session: false})
 
 router.post('/add', requireAuth, (req, res) => {
-  const user = utils.setUserInfo(req)
-  Posts
-    .forge({
-    user_id: user.id,
+
+  const newPost = {
+    user_id: utils.setUserInfo(req.user).id,
     title: req.body.title,
-    content: req.body.content,
-    })
-    .save()
+    content: req.body.content
+  }
+
+  Posts
+    .createNewPost(newPost)
     .then(saved => {
-      res.json({saved});
+      res.json({saved})
     })
-    .catch(() => {
-      res.json({
-        message: 'invalid payload!'
+    .catch((err) => {
+      let msg = err.msg ? err.msg : 'invalid payload!'
+      res.status(400).json({
+        message: msg
       })
-    });
+    })
 })
 
 router.get('/all', (req, res) => {
   Posts
     .fetchAll()
     .then(data => {
-      res.json({data});
-    });
+      res.json({data})
+    })
 })
 
-module.exports = router;
+module.exports = router

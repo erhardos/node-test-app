@@ -7,17 +7,17 @@ const express = require('express'),
   passportService = require('../config/passport'),
   utils = require('../utils/utils')
 
-const requireLogin = passport.authenticate('local', {session: false});
-const requireAuth = passport.authenticate('jwt', {session: false});
+const requireLogin = passport.authenticate('local', {session: false})
+const requireAuth = passport.authenticate('jwt', {session: false})
 
 router.post('/login', requireLogin, (req, res) => {
 
-  let userInfo = setUserInfo(req.user);
+  let userInfo = utils.setUserInfo(req.user)
 
   res.status(200).json({
     token: 'JWT ' + generateToken(userInfo),
     user: userInfo
-  });
+  })
 })
 
 router.post('/register', (req, res) => {
@@ -36,7 +36,7 @@ router.post('/register', (req, res) => {
 
       // If user is not unique, return error
       if (existingUser)
-        return res.status(422).json({error: 'That username is already in use.'});
+        return res.status(422).json({error: 'That username is already in use.'})
 
       // If email is unique and password was provided, create account
       Users
@@ -45,21 +45,21 @@ router.post('/register', (req, res) => {
         .then(user => {
           // Respond with JWT if user was create
 
-          const userInfo = utils.setUserInfo(user);
+          const userInfo = utils.setUserInfo(user)
 
           res.status(201).json({
             token: 'JWT ' + generateToken(userInfo),
             user: userInfo
-          });
+          })
         })
         .catch(err => {
           console.log(err)
           res.status(500).json({error: 'something is broken!', err})
-        });
+        })
     })
     .catch(err =>
       res.status(500).json({error: "more than broken!!", err})
-    );
+    )
 })
 
 router.delete('/delete', requireAuth, (req, res) => {
@@ -80,7 +80,7 @@ router.delete('/delete', requireAuth, (req, res) => {
 function generateToken(user) {
   return jwt.sign(user, config.secret, {
     expiresIn: 10080 // in seconds
-  });
+  })
 }
 
-module.exports = router;
+module.exports = router
