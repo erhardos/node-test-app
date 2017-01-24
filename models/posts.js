@@ -2,21 +2,34 @@
 const bookshelf = require('../db/bookshelf')
 const User      = require('./user')
 const validator = require('validator')
+const _         = require('lodash')
+
+const fields = ['user_id', 'title', 'content']
+// TODO: make validation rules throw appropriate errors
+const validationRules = {
+    title: val => validator.isByteLength(val, {min: 3, max: 255}),
+    content: val => true,
+    user_id: val => _.isNumber(val)
+}
+
+const validate = require('../utils/utils').validate(fields, validationRules)
 
 let Posts = bookshelf.Model.extend({
   tableName: 'posts',
 
-  user: function () {
+  user () {
     return this.belongsTo(User)
   },
+
+  patch(body) {
+    return validate(body).then(body => this.save(body, {patch: true}))
+  },
+
 }, {
   createNewPost (newPost) {
-    if (!validator.isByteLength(newPost.title, {min: 3, max: 255})) {
-      return Promise.reject({msg: 'Wrong length of title, should be min 3 chars and max 255 chars.'})
-    }
+    return validate(newPost).then(body => this.forge(body).save())
+  },
 
-    return this.forge(newPost).save()
-  }
 })
 
 module.exports = Posts
