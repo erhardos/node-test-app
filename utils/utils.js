@@ -3,8 +3,10 @@ const Promise   = require('bluebird')
 
 // Set user info from request
 module.exports = {
-  setUserInfo (request) {
-    return _.pick(request.attributes, ['id', 'username', 'email'])
+  setUserInfo (user) {
+    if (!user.attributes)
+      throw new ReferenceError('User does not contain attributes object')
+    return _.pick(user.attributes, ['id', 'username', 'email'])
   },
 
   validate: (fields, validationRules) => Promise.method(function (body) {

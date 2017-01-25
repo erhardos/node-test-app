@@ -63,7 +63,7 @@ router.post('/register', (req, res) => {
 })
 
 router.delete('/delete', requireAuth, (req, res) => {
-  const user = utils.setUserInfo(req)
+  const user = utils.setUserInfo(req.user)
   Users
     .forge({id:user.id})
     .destroy()
