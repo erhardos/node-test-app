@@ -3,6 +3,7 @@ const bookshelf = require('../db/bookshelf')
 const User      = require('./user')
 const validator = require('validator')
 const _         = require('lodash')
+const Promise   = require('bluebird')
 
 const fields = ['user_id', 'title', 'content']
 // TODO: make validation rules throw appropriate errors
@@ -21,14 +22,23 @@ let Posts = bookshelf.Model.extend({
     return this.belongsTo(User)
   },
 
+  initialize () {
+    this.on('saving', this.onSaving)
+  },
+
+  onSaving: Promise.method(function (model, attrs, options) {
+    return validate(attrs)
+      .then(() => model)
+      .catch(err => {
+        throw err
+      })
+  }),
+
   patch(body) {
-    return validate(body).then(body => this.save(body, {patch: true}))
+    return this.save(body, {patch: true})
   },
 
 }, {
-  createNewPost (newPost) {
-    return validate(newPost).then(body => this.forge(body).save())
-  },
 
 })
 

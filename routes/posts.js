@@ -52,9 +52,10 @@ router.post('/', requireAuth, (req, res) => {
   }
 
   Posts
-    .createNewPost(newPost)
-    .then(saved => {
-      res.json({saved})
+    .forge(newPost)
+    .save()
+    .then(data => {
+      res.json({data})
     })
     .catch(err => {
       let msg = err.message ? err.message : 'invalid payload!'
