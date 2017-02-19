@@ -1,26 +1,24 @@
 const express     = require('express'),
   fs              = require('fs'),
   multer          = require('multer'),
-  Users           = require('../models/user'),
   router          = express.Router(),
   config          = require('../config/main'),
   jwt             = require('jsonwebtoken'),
   passport        = require('passport'),
   passportService = require('../config/passport'),
   _               = require('lodash'),
-  utils           = require('../utils/utils'),
-  uploadAvatar    = require('../utils/fileUpload').avatar
+  utils           = require('../services/utils'),
+  uploadAvatar    = require('../services/fileUpload').avatar
+  userService     = require('../services/users')
 
 const requireLogin = passport.authenticate('local', { session: false })
 const requireAuth = passport.authenticate('jwt', { session: false })
 
 /* GET users listing. */
 router.get('/all', requireAuth, (req, res) => {
-  Users
-    .fetchAll()
-    .then(function (data) {
-      res.json({data})
-    })
+  userService.getAllUsers.then(function (data) {
+    res.json({data})
+  })
 })
 
 router.get('/avatar', requireAuth,  (req, res) => {

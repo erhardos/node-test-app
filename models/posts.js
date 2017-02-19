@@ -13,7 +13,7 @@ const validationRules = {
     user_id: val => _.isNumber(val)
 }
 
-const validate = require('../utils/utils').validate(fields, validationRules)
+const validate = require('../services/utils').validate(fields, validationRules)
 
 let Posts = bookshelf.Model.extend({
   tableName: 'posts',

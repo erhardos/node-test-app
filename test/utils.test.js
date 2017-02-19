@@ -2,7 +2,7 @@ const chai = require('chai'),
       expect = chai.expect,
       sinon = require('sinon')
 
-const utils = require('./../utils/utils')
+const utils = require('./../services/utils')
 
 describe('utils tests', () => {
   describe('setUserInfo basic tests', () => {

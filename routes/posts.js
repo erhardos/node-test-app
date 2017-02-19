@@ -1,21 +1,18 @@
 const express = require('express'),
-  Posts = require('../models/posts'),
-  Users = require('../models/user'),
   router = express.Router(),
-  config = require('../config/main'),
-  jwt = require('jsonwebtoken'),
   passport = require('passport'),
   passportService = require('../config/passport'),
-  utils = require('../utils/utils'),
+  utils = require('../services/utils'),
   validator = require('validator'),
   _ = require('lodash')
   assert = require('assert')
+  postService     = require('../services/posts')
 
 const requireAuth = passport.authenticate('jwt', {session: false})
 
 router.get('/', (req, res) => {
-  Posts
-    .fetchAll()
+  postService
+    .getAll()
     .then(data => {
       res.json({data})
     })
@@ -28,9 +25,8 @@ router.get('/:id', (req, res) => {
   if (!validator.isNumeric(req.params.id))
     res.status(404).json({msg: 'Post does not exists.'})
   else
-    Posts
-      .forge({id: req.params.id})
-      .fetch()
+    postService
+      .getOneById(req.params.id)
       .then(data => {
         if (data)
           res.json({data})
@@ -51,9 +47,8 @@ router.post('/', requireAuth, (req, res) => {
     content: req.body.content
   }
 
-  Posts
-    .forge(newPost)
-    .save()
+  postService
+    .create(newPost)
     .then(data => {
       res.json({data})
     })
@@ -71,9 +66,8 @@ router.put('/:id', requireAuth, (req, res) => {
 
   const user = utils.setUserInfo(req.user)
 
-  Posts
-    .forge({id:req.params.id})
-    .fetch()
+  postService
+    .getOneById(req.params.id)
     .then(post => {
       if(!post)
         return res.status(404).json({msg: 'Post does not exists.'})
