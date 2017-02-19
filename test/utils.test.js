@@ -50,4 +50,30 @@ describe('utils tests', () => {
 
     })
   })
+
+  describe('validator tests', () => {
+    const basicFieldsSet = ['name', 'telNumber', 'address', 'email']
+
+    it('validators are called', () => {
+      const validatorSpies = {
+        name: sinon.stub().returns(true),
+        email: sinon.stub().returns(true)
+      }
+      const validator = utils.validate(basicFieldsSet, validatorSpies)
+
+      const user = {
+        name: 'John',
+        telNumber: 12312312,
+        email: 'john@mail.com'
+      }
+
+      return validator(user).then(data => {
+        expect(data).to.be.equal(user)
+
+        expect(validatorSpies.name.callCount).to.be.equal(1)
+        expect(validatorSpies.email.callCount).to.be.equal(1)
+      })
+
+    })
+  })
 })

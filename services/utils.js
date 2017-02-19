@@ -10,11 +10,12 @@ module.exports = {
   },
 
   validate: (fields, validationRules) => Promise.method(function (body) {
+    //TODO: create require validator
     _.forIn(body, (val, key) => {
       if (!_.includes(fields, key))
         throw new ReferenceError(`${key} Property does not exists.`)
 
-      if(!(validationRules[key] && validationRules[key](val)))
+      if(validationRules[key] && !validationRules[key](val))
         throw new Error(`${key} is not valid.`, key, val)
     })
 
