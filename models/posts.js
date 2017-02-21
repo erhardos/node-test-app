@@ -1,19 +1,25 @@
 'use strict'
 const bookshelf = require('../db/bookshelf')
 const User      = require('./user')
-const validator = require('validator')
 const _         = require('lodash')
 const Promise   = require('bluebird')
 
-const fields = ['user_id', 'title', 'content']
-// TODO: make validation rules throw appropriate errors
-const validationRules = {
-    title: val => validator.isByteLength(val, {min: 3, max: 255}),
-    content: val => true,
-    user_id: val => _.isNumber(val)
+
+const model = {
+  title: {
+    type: 'string',
+    require: true,
+    length: {min: 3, max: 255},
+  },
+  content: {
+    type: 'string'
+  },
+  user_id: {
+    type: 'numeric',
+  }
 }
 
-const validate = require('../services/utils').validate(fields, validationRules)
+const validate = require('../services/utils').validate(model)
 
 let Posts = bookshelf.Model.extend({
   tableName: 'posts',
@@ -27,7 +33,7 @@ let Posts = bookshelf.Model.extend({
   },
 
   onSaving: Promise.method(function (model, attrs, options) {
-    return validate(attrs)
+    return validate(attrs, model.isNew())
       .then(() => model)
       .catch(err => {
         throw err

@@ -52,14 +52,21 @@ describe('utils tests', () => {
   })
 
   describe('validator tests', () => {
-    const basicFieldsSet = ['name', 'telNumber', 'address', 'email']
 
-    it('validators are called', () => {
-      const validatorSpies = {
-        name: sinon.stub().returns(true),
-        email: sinon.stub().returns(true)
+    it('valid model pass', () => {
+      const model = {
+        name: {
+          type: 'string',
+          require: true
+        },
+        email: {
+          type: 'email'
+        },
+        telNumber: {
+          type: 'number'
+        }
       }
-      const validator = utils.validate(basicFieldsSet, validatorSpies)
+      const validator = utils.validate(model)
 
       const user = {
         name: 'John',
@@ -67,11 +74,8 @@ describe('utils tests', () => {
         email: 'john@mail.com'
       }
 
-      return validator(user).then(data => {
+      return validator(user, true).then(data => {
         expect(data).to.be.equal(user)
-
-        expect(validatorSpies.name.callCount).to.be.equal(1)
-        expect(validatorSpies.email.callCount).to.be.equal(1)
       })
 
     })
