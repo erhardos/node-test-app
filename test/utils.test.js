@@ -50,34 +50,4 @@ describe('utils tests', () => {
 
     })
   })
-
-  describe('validator tests', () => {
-
-    it('valid model pass', () => {
-      const model = {
-        name: {
-          type: 'string',
-          require: true
-        },
-        email: {
-          type: 'email'
-        },
-        telNumber: {
-          type: 'number'
-        }
-      }
-      const validator = utils.validate(model)
-
-      const user = {
-        name: 'John',
-        telNumber: 12312312,
-        email: 'john@mail.com'
-      }
-
-      return validator(user, true).then(data => {
-        expect(data).to.be.equal(user)
-      })
-
-    })
-  })
 })
