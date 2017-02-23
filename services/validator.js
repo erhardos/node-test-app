@@ -41,7 +41,7 @@ function modelValidator(model) {
           try {
             validators[rule](body[key], options)
           } catch (err) {
-            throw new Error(`'${key}' error: ${err}`)
+            throw new Error(`'${key}' ${err}`)
           }
         })
 

@@ -5,7 +5,7 @@ const chai = require('chai'),
 const utils = require('./../services/utils')
 
 describe('utils tests', () => {
-  describe('setUserInfo basic tests', () => {
+  describe('setUserInfo basic', () => {
     it('return nested attributes object from user', () => {
       const user = {
         attributes: {
