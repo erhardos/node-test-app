@@ -20,15 +20,17 @@ router.post('/login', requireLogin, (req, res) => {
 
 router.post('/register', (req, res) => {
   // Check for registration errors
-  const username = req.body.username
-  const email = req.body.email
-  const password = req.body.password
+  const userObj = {
+    username: req.body.username,
+    email: req.body.email,
+    password: req.body.password
+  }
 
-  if (!username || !email || !password)
-    return res.status(400).send({error: 'There are some required fields fucker!'})
+  if (!userObj.username || !userObj.email || !userObj.password)
+    return res.status(400).send({error: 'There are some required fields!'})
 
   usersService
-    .getOneByUsername(username)
+    .getOneByUsername(userObj.username)
     .then(existingUser => {
 
       // If user is not unique, return error
@@ -37,7 +39,7 @@ router.post('/register', (req, res) => {
 
       // If email is unique and password was provided, create account
       usersService
-        .create(username, email, password)
+        .create(userObj)
         .then(user => {
           // Respond with JWT if user was create
 

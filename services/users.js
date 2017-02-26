@@ -4,31 +4,32 @@ const Users   = require('../models/user'),
 
 class UsersService {
 
-  constructor(){
+  constructor(Users){
+    this._Users = Users
   }
 
   getAllUsers() {
-    return Users.fetchAll()
+    return this._Users.fetchAll()
   }
 
   getOneByUsername(username) {
-    return Users
+    return this._Users
       .forge({username})
       .fetch()
   }
 
   getOneById(id) {
-    return Users
+    return this._Users
       .forge({id})
       .fetch()
   }
 
-  create(username, email, password, passwordConfirm) {
-    if (typeof passwordConfirm !== 'undefined' && password !== passwordConfirm)
+  create(userObj, passwordConfirm) {
+    if (typeof passwordConfirm !== 'undefined' && userObj.password !== passwordConfirm)
       return Promise.reject(new Error('passwords doesn\'t match'))
 
-    return Users
-      .forge({username, email, password})
+    return this._Users
+      .forge(userObj)
       .save()
   }
 
@@ -39,11 +40,11 @@ class UsersService {
   }
 
   destroy(id) {
-    return Users
+    return this._Users
       .forge({id})
       .destroy()
   }
 
 }
 
-module.exports = new UsersService()
+module.exports = new UsersService(Users)
