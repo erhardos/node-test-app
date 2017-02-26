@@ -19,7 +19,7 @@ const model = {
   }
 }
 
-const validate = require('../services/utils')(model)
+let validate = require('../services/validator')(model)
 
 let Posts = bookshelf.Model.extend({
   tableName: 'posts',

@@ -1,36 +1,37 @@
 const Posts = require('../models/posts')
 
 class PostsService {
-  constructor(){
+  constructor(Posts){
+    this._Posts = Posts
   }
 
   getAll() {
-    return Posts
+    return this._Posts
       .fetchAll()
   }
 
   getOneById(id) {
-    return Posts
+    return this._Posts
       .forge({id})
       .fetch()
   }
 
   create(post) {
-    return Posts
+    return this._Posts
       .forge(post)
       .save()
   }
 
   patch(post) {
-    return Posts
+    return this._Posts
       .patch(post)
   }
 
   destroy(id) {
-    return Posts
+    return this._Posts
       .forge({id})
       .destroy()
   }
 }
 
-module.exports = new PostsService()
+module.exports = new PostsService(Posts)
