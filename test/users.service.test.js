@@ -22,7 +22,8 @@ describe('users service tests', () => {
     }
 
     it('simple usage', () => {
-      usersService.create.call(userSpy, userObj)
+      return usersService
+        .create.call(userSpy, userObj)
         .then(response => {
           expect(userSpy._Users.forge.calledOnce).to.be.true
           expect(userSpy._Users.forge.args[0][0]).to.be.equal(userObj)
@@ -35,7 +36,8 @@ describe('users service tests', () => {
     })
 
     it('optional password confirmation positive', () => {
-      usersService.create.call(userSpy, userObj, userObj.password)
+      return usersService
+        .create.call(userSpy, userObj, userObj.password)
         .then(response => {
           expect(response).to.be.equal(userObj)
         })
@@ -44,7 +46,8 @@ describe('users service tests', () => {
     it('optional password confirmation negative', () => {
       const invalid_password = '1234'
 
-      usersService.create.call(userSpy, userObj, invalid_password)
+      return usersService
+        .create.call(userSpy, userObj, invalid_password)
         .catch(err => {
           expect(err).to.be.instanceof(Error)
             .and.have.property('message', 'passwords doesn\'t match');
@@ -62,7 +65,11 @@ describe('users service tests', () => {
         }
       }
 
-      expect(usersService.getUserInfo(user)).to.deep.equal(user.attributes)
+      return usersService
+        .getUserInfo(user)
+        .then(response => {
+          expect(response).to.deep.equal(user.attributes)
+        })
     })
 
     it('omit not specified keys', () => {
@@ -76,28 +83,38 @@ describe('users service tests', () => {
         }
       }
 
-      expect(usersService.getUserInfo(user))
-        .to.contain.all.keys(['id', 'email', 'username']);
-      expect(usersService.getUserInfo(user))
-        .to.not.contain.all.keys(['otherField', 'anotherOne']);
+      return usersService
+        .getUserInfo(user)
+        .then(response => {
+          expect(response).to.contain.all.keys(['id', 'email', 'username'])
+          expect(response).to.not.contain.all.keys(['otherField', 'anotherOne']);
+        })
     })
 
     it('throw error when nothing passed', () => {
-      expect(usersService.getUserInfo)
-        .to.throw(TypeError, /Cannot read property \'attributes\' of undefined/);
+      return usersService
+        .getUserInfo()
+        .catch(err => {
+          expect(err).to.be.instanceof(TypeError)
+            .and.have.property('message', 'Cannot read property \'attributes\' of undefined');
+        })
+
 
     })
 
-    it('throw error when does not contain attributes', () => {
+    it('throw error when does not contain expected attributes', () => {
       const user = {
         randomKey: {
           id: 2,
           email: 'dummy@email.com'
         }
       }
-
-      expect(usersService.getUserInfo.bind(null, user))
-        .to.throw(ReferenceError, /User does not contain attributes object/);
+      return usersService
+        .getUserInfo(user)
+        .catch(err => {
+          expect(err).to.be.instanceof(ReferenceError)
+            .and.have.property('message', 'User does not contain attributes object');
+        })
     })
   })
 })

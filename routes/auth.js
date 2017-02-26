@@ -8,13 +8,14 @@ const requireLogin = passport.authenticate('local', {session: false})
 const requireAuth = passport.authenticate('jwt', {session: false})
 
 router.post('/login', requireLogin, (req, res) => {
-
-  let userInfo = usersService.getUserInfo(req.user)
-
-  res.status(200).json({
-    token: 'JWT ' + usersService.generateToken(userInfo),
-    user: userInfo
-  })
+  usersService
+    .getUserInfo(req.user)
+    .then(userInfo => {
+      res.status(200).json({
+        token: 'JWT ' + usersService.generateToken(userInfo),
+        user: userInfo
+      })
+    })
 })
 
 router.post('/register', (req, res) => {
@@ -41,17 +42,20 @@ router.post('/register', (req, res) => {
         .create(userObj)
         .then(user => {
           // Respond with JWT if user was create
-
-          const userInfo = usersService.getUserInfo(user)
-
-          res.status(201).json({
-            token: 'JWT ' + usersService.generateToken(userInfo),
-            user: userInfo
-          })
+          usersService
+            .getUserInfo(user)
+            .then(userInfo => {
+              res.status(201).json({
+                token: 'JWT ' + usersService.generateToken(userInfo),
+                user: userInfo
+              })
+            })
+            .catch(err => {
+              throw new Error(err.message)
+            })
         })
         .catch(err => {
-          console.log(err)
-          res.status(500).json({error: 'something is broken!', err})
+          throw new Error(err.message)
         })
     })
     .catch(err =>
@@ -60,17 +64,21 @@ router.post('/register', (req, res) => {
 })
 
 router.delete('/delete', requireAuth, (req, res) => {
-  const user = usersService.getUserInfo(req.user)
   usersService
-    .destroy(user.id)
-    .then(()=>{
-      res.status(204)
+    .getUserInfo(req.user)
+    .then(user => {
+      usersService
+        .destroy(user.id)
+        .then(()=>{
+          res.status(204)
+        })
+        .catch(()=> {
+          res.json({
+            message: 'Error while processing, account was not deleted!'
+          })
+        })
     })
-    .catch(()=> {
-      res.json({
-        message: 'Error while processing, account was not deleted!'
-      })
-    })
+
 })
 
 module.exports = router

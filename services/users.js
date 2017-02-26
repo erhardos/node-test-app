@@ -1,7 +1,8 @@
 const Users   = require('../models/user'),
       config  = require('../config/main'),
       jwt     = require('jsonwebtoken')
-      _       = require('lodash')
+      _       = require('lodash'),
+      Promise = require('bluebird')
 
 class UsersService {
 
@@ -47,9 +48,11 @@ class UsersService {
   }
 
   getUserInfo (user) {
-    if (!user.attributes)
-      throw new ReferenceError('User does not contain attributes object')
-    return _.pick(user.attributes, ['id', 'username', 'email'])
+    return Promise.method(function (user) {
+      if (!user.attributes)
+        throw new ReferenceError('User does not contain attributes object')
+      return _.pick(user.attributes, ['id', 'username', 'email'])
+    })(user)
   }
 
 }
