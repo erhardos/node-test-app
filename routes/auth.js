@@ -2,7 +2,6 @@ const express = require('express'),
   router = express.Router(),
   passport = require('passport'),
   passportService = require('../config/passport'),
-  utils = require('../services/utils'),
   usersService = require('../services/users')
 
 const requireLogin = passport.authenticate('local', {session: false})
@@ -10,7 +9,7 @@ const requireAuth = passport.authenticate('jwt', {session: false})
 
 router.post('/login', requireLogin, (req, res) => {
 
-  let userInfo = utils.setUserInfo(req.user)
+  let userInfo = usersService.getUserInfo(req.user)
 
   res.status(200).json({
     token: 'JWT ' + usersService.generateToken(userInfo),
@@ -43,7 +42,7 @@ router.post('/register', (req, res) => {
         .then(user => {
           // Respond with JWT if user was create
 
-          const userInfo = utils.setUserInfo(user)
+          const userInfo = usersService.getUserInfo(user)
 
           res.status(201).json({
             token: 'JWT ' + usersService.generateToken(userInfo),
@@ -61,7 +60,7 @@ router.post('/register', (req, res) => {
 })
 
 router.delete('/delete', requireAuth, (req, res) => {
-  const user = utils.setUserInfo(req.user)
+  const user = usersService.getUserInfo(req.user)
   usersService
     .destroy(user.id)
     .then(()=>{

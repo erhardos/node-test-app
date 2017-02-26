@@ -51,4 +51,53 @@ describe('users service tests', () => {
         })
     })
   })
+
+  describe('getUserInfo', () => {
+    it('return nested attributes object from user', () => {
+      const user = {
+        attributes: {
+          id: 2,
+          email: 'dummy@email.com',
+          username: "john.doe"
+        }
+      }
+
+      expect(usersService.getUserInfo(user)).to.deep.equal(user.attributes)
+    })
+
+    it('omit not specified keys', () => {
+      const user = {
+        attributes: {
+          id: 2,
+          email: 'dummy@email.com',
+          username: "john.doe",
+          otherField: "some random val",
+          anotherOne: "no idea what"
+        }
+      }
+
+      expect(usersService.getUserInfo(user))
+        .to.contain.all.keys(['id', 'email', 'username']);
+      expect(usersService.getUserInfo(user))
+        .to.not.contain.all.keys(['otherField', 'anotherOne']);
+    })
+
+    it('throw error when nothing passed', () => {
+      expect(usersService.getUserInfo)
+        .to.throw(TypeError, /Cannot read property \'attributes\' of undefined/);
+
+    })
+
+    it('throw error when does not contain attributes', () => {
+      const user = {
+        randomKey: {
+          id: 2,
+          email: 'dummy@email.com'
+        }
+      }
+
+      expect(usersService.getUserInfo.bind(null, user))
+        .to.throw(ReferenceError, /User does not contain attributes object/);
+    })
+  })
 })

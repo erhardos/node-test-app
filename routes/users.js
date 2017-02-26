@@ -7,7 +7,6 @@ const express     = require('express'),
   passport        = require('passport'),
   passportService = require('../config/passport'),
   _               = require('lodash'),
-  utils           = require('../services/utils'),
   uploadAvatar    = require('../services/fileUpload').avatar
   userService     = require('../services/users')
 

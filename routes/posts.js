@@ -1,12 +1,12 @@
-const express = require('express'),
-  router = express.Router(),
-  passport = require('passport'),
+const express     = require('express'),
+  router          = express.Router(),
+  passport        = require('passport'),
   passportService = require('../config/passport'),
-  utils = require('../services/utils'),
-  validator = require('validator'),
-  _ = require('lodash')
-  assert = require('assert')
+  validator       = require('validator'),
+  _               = require('lodash')
+  assert          = require('assert')
   postService     = require('../services/posts')
+  userService     = require('../services/users')
 
 const requireAuth = passport.authenticate('jwt', {session: false})
 
@@ -40,7 +40,7 @@ router.get('/:id', (req, res) => {
 
 router.post('/', requireAuth, (req, res) => {
 
-  const user = utils.setUserInfo(req.user)
+  const user = userService.getUserInfo(req.user)
   const newPost = {
     user_id: user.id,
     title: req.body.title,
@@ -64,7 +64,7 @@ router.put('/:id', requireAuth, (req, res) => {
   if (!validator.isNumeric(req.params.id))
     return res.status(404).json({msg: 'Post does not exists.'})
 
-  const user = utils.setUserInfo(req.user)
+  const user = userService.getUserInfo(req.user)
 
   postService
     .getOneById(req.params.id)

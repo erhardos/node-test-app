@@ -1,6 +1,7 @@
 const Users   = require('../models/user'),
       config  = require('../config/main'),
       jwt     = require('jsonwebtoken')
+      _       = require('lodash')
 
 class UsersService {
 
@@ -43,6 +44,12 @@ class UsersService {
     return this._Users
       .forge({id})
       .destroy()
+  }
+
+  getUserInfo (user) {
+    if (!user.attributes)
+      throw new ReferenceError('User does not contain attributes object')
+    return _.pick(user.attributes, ['id', 'username', 'email'])
   }
 
 }
