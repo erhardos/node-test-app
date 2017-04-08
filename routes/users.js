@@ -15,7 +15,7 @@ const requireAuth = passport.authenticate('jwt', { session: false })
 
 /* GET users listing. */
 router.get('/all', requireAuth, (req, res) => {
-  userService.getAllUsers.then(function (data) {
+  userService.getAllUsers().then(function (data) {
     res.json({data})
   })
 })
@@ -37,7 +37,7 @@ router.post('/adile/', function (req, res) {
   } catch (err) {
     res.json(err)
   }
-  if (typeof text == 'undefined') {
+  if (typeof text === 'undefined') {
     res.json('fail')
   }
   fs.writeFile("/tmp/test", text, function (err) {

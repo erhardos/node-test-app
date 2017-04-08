@@ -1,6 +1,6 @@
 const Users   = require('../models/user'),
       config  = require('../config/main'),
-      jwt     = require('jsonwebtoken')
+      jwt     = require('jsonwebtoken'),
       _       = require('lodash'),
       Promise = require('bluebird')
 
