@@ -34,6 +34,27 @@ describe('users routes', () => {
           done()
         })
     })
+
+    it('register', done => {
+      chai.request(server)
+        .post('/auth/register')
+        .send({
+          username: 'john',
+          email: 'john@mail.com',
+          password: 'topsecret'
+        })
+        .end((err, res) => {
+          expect(err).to.be.null
+          expect(res.statusCode).to.be.equal(201)
+          expect(res.body).to.not.be.false
+          expect(res.body.user).to.be.deep.equal({
+            id: 5, // this can fail
+            username: 'john',
+            email: 'john@mail.com'
+          })
+          done()
+        })
+    })
   })
 
   describe('login', () => {
@@ -66,7 +87,7 @@ describe('users routes', () => {
       chai.request(server)
           .post('/auth/login')
           .send({
-            username: 'guy1',
+            username: 'guy3',
             password: 'topsecret'
           })
           .end((err, res) => {
@@ -85,6 +106,18 @@ describe('users routes', () => {
             expect(res.body.data).to.have.length(4)
             done()
           })
+    })
+
+    // causing db to hang
+    xit('delete account', done => {
+      chai.request(server)
+        .delete('/auth/delete')
+        .set('Authorization', token)
+        .end((err, res) => {
+          expect(err).to.be.null
+          expect(res.statusCode).to.be.equal(204)
+          done()
+        })
     })
   })
 

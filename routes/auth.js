@@ -69,10 +69,11 @@ router.delete('/delete', requireAuth, (req, res) => {
     .then(user => {
       usersService
         .destroy(user.id)
-        .then(()=>{
+        .then(() => {
           res.status(204)
         })
-        .catch(()=> {
+        .catch(() => {
+          res.status(400)
           res.json({
             message: 'Error while processing, account was not deleted!'
           })
