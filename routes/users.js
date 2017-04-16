@@ -33,7 +33,6 @@ router.post('/adile/', function (req, res) {
 
   try {
     text = req.body.text
-    console.log(text)
   } catch (err) {
     res.json(err)
   }
@@ -46,7 +45,6 @@ router.post('/adile/', function (req, res) {
       return
     }
 
-    console.log("The file was saved!")
     res.json('ok')
   })
 })

@@ -13,6 +13,9 @@ const localLogin = new LocalStrategy({}, (username, password, done) => {
       if (!user)
         return done(null, false, {error: 'Your login details could not be verified. Please try again.'})
 
+      if (!user.attributes.active)
+	return done(null, false, {error: 'User not found.'})
+
       User.comparePassword(username, password)
         .then(res => {
           if (res) {
@@ -42,7 +45,7 @@ const jwtLogin = new JwtStrategy(jwtOptions, (payload, done) => {
     .forge({'id': payload.id})
     .fetch()
     .then(user => {
-      if (user.attributes)
+      if (user.attributes && user.attributes.active)
         done(null, user);
       else
         done(null, false);

@@ -70,7 +70,7 @@ router.delete('/delete', requireAuth, (req, res) => {
       usersService
         .destroy(user.id)
         .then(() => {
-          res.status(204)
+          res.status(204).send()
         })
         .catch(() => {
           res.status(400)

@@ -11,7 +11,7 @@ class UsersService {
   }
 
   getAllUsers() {
-    return this._Users.fetchAll()
+    return this._Users.query('where', 'active', '=', 'true').fetchAll()
   }
 
   getOneByUsername(username) {
@@ -44,7 +44,7 @@ class UsersService {
   destroy(id) {
     return this._Users
       .forge({id})
-      .destroy()
+      .save({active: false}, {patch: true})
   }
 
   getUserInfo (user) {

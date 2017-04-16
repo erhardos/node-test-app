@@ -47,11 +47,8 @@ describe('users routes', () => {
           expect(err).to.be.null
           expect(res.statusCode).to.be.equal(201)
           expect(res.body).to.not.be.false
-          expect(res.body.user).to.be.deep.equal({
-            id: 5, // this can fail
-            username: 'john',
-            email: 'john@mail.com'
-          })
+	  expect(res.body.user.username).to.be.equal('john')
+	  expect(res.body.user.email).to.be.equal('john@mail.com')
           done()
         })
     })
@@ -69,11 +66,8 @@ describe('users routes', () => {
             expect(err).to.be.null
             expect(res.statusCode).to.be.equal(200)
             expect(res.body).to.have.ownProperty('token')
-            expect(res.body.user).to.be.deep.equal({
-              id: 1,
-              username: 'guy1',
-              email: 'gu1@mail.com'
-            })
+	    expect(res.body.user.username).to.be.equal('guy1')
+	    expect(res.body.user.email).to.be.equal('gu1@mail.com')
             done()
           })
     })
@@ -109,14 +103,23 @@ describe('users routes', () => {
     })
 
     // causing db to hang
-    xit('delete account', done => {
+    it('deactivate account', done => {
       chai.request(server)
         .delete('/auth/delete')
         .set('Authorization', token)
         .end((err, res) => {
           expect(err).to.be.null
           expect(res.statusCode).to.be.equal(204)
-          done()
+
+	  knex.select('username', 'active')
+	      .from('users')
+	      .where('username', 'guy3')
+	      .then(rows => {
+		expect(rows[0].username).to.be.equal('guy3')
+		expect(rows[0].active).to.be.false
+
+		done()
+		})
         })
     })
   })
