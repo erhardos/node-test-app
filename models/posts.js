@@ -15,7 +15,7 @@ const model = {
     type: 'string'
   },
   user_id: {
-    type: 'numeric',
+    type: 'number',
   }
 }
 
@@ -32,8 +32,10 @@ let Posts = bookshelf.Model.extend({
     this.on('saving', this.onSaving)
   },
 
-  onSaving: Promise.method(function (model, attrs, options) {
-    return validate(attrs, model.isNew())
+  onSaving: Promise.method(function (model, attrs) {
+    // attrs is empty if new object is created
+    const attributes = _.isEmpty(attrs) ? model.attributes : attrs
+    return validate(attributes, model.isNew())
       .then(() => model)
       .catch(err => {
         throw err
