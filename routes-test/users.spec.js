@@ -66,8 +66,8 @@ describe('users routes', () => {
             expect(err).to.be.null
             expect(res.statusCode).to.be.equal(200)
             expect(res.body).to.have.ownProperty('token')
-	    expect(res.body.user.username).to.be.equal('guy1')
-	    expect(res.body.user.email).to.be.equal('gu1@mail.com')
+            expect(res.body.user.username).to.be.equal('guy1')
+	        expect(res.body.user.email).to.be.equal('gu1@mail.com')
             done()
           })
     })
@@ -102,7 +102,6 @@ describe('users routes', () => {
           })
     })
 
-    // causing db to hang
     it('deactivate account', done => {
       chai.request(server)
         .delete('/auth/delete')
@@ -115,12 +114,21 @@ describe('users routes', () => {
 	      .from('users')
 	      .where('username', 'guy3')
 	      .then(rows => {
-		expect(rows[0].username).to.be.equal('guy3')
-		expect(rows[0].active).to.be.false
-
-		done()
-		})
-        })
+		    expect(rows[0].username).to.be.equal('guy3')
+		    expect(rows[0].active).to.be.false
+		    chai.request(server)
+                .post('/auth/login')
+                .send({
+			      username: 'guy3',
+                  password: 'topsecret1'
+                })
+                .end((err, res) => {
+			      expect(err).to.be.not.null
+                  expect(res.statusCode).to.be.equal(401)
+			      done()
+		    })
+	      })
+      })
     })
   })
 

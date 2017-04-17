@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha"
+    "unit-test": "mocha ./unit-test/",
+    "routes-test": "mocha ./routes-test/",
+    "test": "npm run unit-test && npm run routes-test"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",

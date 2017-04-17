@@ -16,6 +16,9 @@ router.post('/login', requireLogin, (req, res) => {
         user: userInfo
       })
     })
+    .catch(err => {
+        res.status(400).json({message: 'Error during login'})
+    })
 })
 
 router.post('/register', (req, res) => {
