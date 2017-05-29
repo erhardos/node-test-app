@@ -1,7 +1,7 @@
 class ResponseError extends Error {
 
-  constructor(msg, code) {
-    super(msg)
+  constructor(msg, code, fileName, lineNumber) {
+    super(msg, fileName, lineNumber)
     this.code = code
   }
 }

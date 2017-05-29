@@ -14,10 +14,8 @@ const requireAuth = passport.authenticate('jwt', {session: false})
 router.get('/', (req, res) => {
   postService
     .getAll()
-    .then(data => {
-      res.json({data})
-    })
-    .catch(err =>{
+    .then(data => res.json({data}))
+    .catch(err => {
       if (err.code)
         return res.status(err.code).json({msg: err.message})
       res.status(500).json({msg:'B like broken.'})
@@ -30,10 +28,8 @@ router.get('/:id', (req, res) => {
     .then(data => {
       if (data)
         res.json({data})
-      else {
+      else
         throw new ResponseError('Post does not exists.', 404)
-      }
-
     })
     .catch(err => {
       if (err.code)

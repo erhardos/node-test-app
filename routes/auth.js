@@ -3,6 +3,7 @@ const express = require('express'),
   passport = require('passport'),
   passportService = require('../config/passport'),
   usersService = require('../services/users')
+  ReferenceError = require('../utils/ResponseError')
 
 const requireLogin = passport.authenticate('local', {session: false})
 const requireAuth = passport.authenticate('jwt', {session: false})
@@ -17,7 +18,9 @@ router.post('/login', requireLogin, (req, res) => {
       })
     })
     .catch(err => {
-        res.status(400).json({message: 'Error during login'})
+      if (err.code)
+        return res(err.code).json({message: err.message})
+      res.status(400).json({message: 'Error during login'})
     })
 })
 
@@ -38,23 +41,21 @@ router.post('/register', (req, res) => {
 
       // If user is not unique, return error
       if (existingUser)
-        throw new Error({code: 422, message: 'That username is already in use.'})
+        throw new ResponseError('That username is already in use.', 422)
 
       // If email is unique and password was provided, create account
       return usersService.create(userObj)
     })
     .then(user => usersService.getUserInfo(user))
-    .then(userInfo => {
-      res.status(201).json({
+    .then(userInfo => res.status(201).json({
         token: 'JWT ' + usersService.generateToken(userInfo),
         user: userInfo
       })
-    })
+    )
     .catch(err => {
-      if (err.code == 422)
-         res.status(422).json({error: message})
-      else
-         res.status(500).json({error: "more than broken!!", err})
+      if (err.code)
+         return res.status(err.code).json({error: err.message})
+      res.status(500).json({error: "more than broken!!", err})
     })
 })
 
@@ -62,9 +63,7 @@ router.delete('/delete', requireAuth, (req, res) => {
   usersService
     .getUserInfo(req.user)
     .then(user => usersService.destroy(user.id))
-    .then(() => {
-      res.status(204).send()
-    })
+    .then(() => res.status(204).send())
     .catch(() => {
        res.status(400).json({message: 'Error while processing, account was not deleted!'})
     })
